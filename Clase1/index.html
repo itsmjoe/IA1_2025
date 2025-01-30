@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Clase1</title>
+  <script src="./tau-prolog.js"></script>
+</head>
+<body>
+  <h1>Clase 1 - Introducción a Lógica e Inferencia</h1>
+  <script>
+    const session = pl.create(1000);
+
+    session.consult(`
+        padre(juan, maria).
+        padre(juan, jose).
+        madre(ana, maria).
+        madre(ana, jose).
+
+        hermano(X, Y) :- padre(P, X), padre(P, Y), X \\= Y.
+    `, {
+        success: function() { console.log('Programa cargado correctamente') },
+        error: function() { console.log('Error al cargar el programa') }
+    });
+
+    session.query("hermano(maria, jose).", {
+        success: function() { console.log('Consulta cargada correctamente') },
+        error: function() { console.log('Error al cargar la consulta') }
+    });
+
+    session.answer({
+        success: function(answer) { alert('Si son hermanos'); },
+        fail: function() { alert('No son hermanos');},
+        error: function(err) { console.log(err); },
+        limit: function() { console.log('Limite excedido'); }
+    });
+  </script>
+</body>
+</html>
