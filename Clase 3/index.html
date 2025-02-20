@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Clase 3 - Prolog</title>
+  <script src="./tau-prolog.js"></script>
+  <link rel="stylesheet" href="./style.css">
+</head>
+<body>
+  <h1>Clase 3 - Lógica e Inferencia</h1>
+  <label for="fileInput">Cargar archivo de código Prolog:</label>
+  <input type="file" id="fileInput" accept=".pl">
+  <div id="queryInputContainer">
+    <input type="text" id="queryInput" placeholder="Ingrese su consulta en Prolog">
+    <button onclick="runQuery()">Ejecutar</button>
+  </div>
+  <br>
+  <textarea id="output" rows="10" cols="50" readonly></textarea>
+
+  <h2>Agregar Nuevos Hechos</h2>
+  <input type="text" id="factInput" placeholder="Ejemplo: depredador(tigre, venado).">
+  <button onclick="addFact()">Agregar</button>
+
+  <h2>Descargar Código Actualizado</h2>
+  <button onclick="downloadPrologFile()">Descargar Código</button>
+  <script src="./index.js"></script>
+</body>
+</html>
