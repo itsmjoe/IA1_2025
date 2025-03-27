@@ -1,0 +1,50 @@
+<script
+  src="https://cdn.jsdelivr.net/gh/aframevr/aframe@1c2407b26c61958baa93967b5412487cd94b290b/dist/aframe-master.min.js"></script>
+<script src="https://raw.githack.com/AR-js-org/AR.js/master/aframe/build/aframe-ar-nft.js"></script>
+
+<style>
+  .arjs-loader {
+    height: 100%;
+    width: 100%;
+    position: absolute;
+    top: 0;
+    left: 0;
+    background-color: rgba(0, 0, 0, 0.8);
+    z-index: 9999;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+
+  .arjs-loader div {
+    text-align: center;
+    font-size: 1.25em;
+    color: white;
+  }
+</style>
+
+<body style="margin : 0px; overflow: hidden;">
+  <!-- Este mensaje se quitará cuando los modelos se carguen, si no se quita, hay problema con el modelo -->
+  <div class="arjs-loader">
+    <div>Loading, please wait...</div>
+  </div>
+
+  <!-- a-frame scene -->
+  <a-scene vr-mode-ui="enabled: false;" renderer="logarithmicDepthBuffer: true;" embedded
+    arjs="trackingMethod: best; sourceType: webcam;debugUIEnabled: false; detectionMode: mono_and_matrix; matrixCodeType: 3x3;">
+    <!-- La url debe ser hacia el archivo scene.fset pero sin la extension -->
+    <a-nft type="nft" url="nftarjs/trexnft/trex" smooth="true" smoothCount="10" smoothTolerance=".01"
+      smoothThreshold="5">
+      <!-- Configuración del modelo o elemento AR -->
+      <a-entity gltf-model="/nftarjs/models/trex/scene.gltf" scale="50 50 50" position="375 0 0" rotation="-90 0 0">
+      </a-entity>
+    </a-nft>
+    <a-nft type="nft" url="nftarjs/lancernft/lancer" smooth="true" smoothCount="10" smoothTolerance=".01"
+      smoothThreshold="5">
+      <a-entity gltf-model="/nftarjs/models/lancer/scene.gltf" scale="100 100 100" position="350 0 0"
+        rotation="-90 0 0">
+      </a-entity>
+    </a-nft>
+    <a-entity camera></a-entity>
+  </a-scene>
+</body>

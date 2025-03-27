@@ -1,0 +1,11 @@
+Model Information:
+* title:	Mitsubishi Lancer Evolution IX
+* source:	https://sketchfab.com/3d-models/mitsubishi-lancer-evolution-ix-ee88ad9414884bdabaf0658943ac339b
+* author:	Benit Kibabu (https://sketchfab.com/benitkibabu)
+
+Model License:
+* license type:	CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)
+* requirements:	Author must be credited. Commercial use is allowed.
+
+If you use this 3D model in your project be sure to copy paste this credit wherever you share it:
+This work is based on "Mitsubishi Lancer Evolution IX" (https://sketchfab.com/3d-models/mitsubishi-lancer-evolution-ix-ee88ad9414884bdabaf0658943ac339b) by Benit Kibabu (https://sketchfab.com/benitkibabu) licensed under CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)
