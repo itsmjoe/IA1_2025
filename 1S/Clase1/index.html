@@ -14,23 +14,26 @@
     session.consult(`
         padre(juan, maria).
         padre(juan, jose).
+        padre(carlos, juan).
         madre(ana, maria).
         madre(ana, jose).
+        madre(luisa, juan).
 
         hermano(X, Y) :- padre(P, X), padre(P, Y), X \\= Y.
+        abuelo(X, Y) :- padre(X, Z), padre(Z, Y).
     `, {
         success: function() { console.log('Programa cargado correctamente') },
         error: function() { console.log('Error al cargar el programa') }
     });
 
-    session.query("hermano(maria, jose).", {
+    session.query("abuelo(carlos, maria).", {
         success: function() { console.log('Consulta cargada correctamente') },
         error: function() { console.log('Error al cargar la consulta') }
     });
 
     session.answer({
-        success: function(answer) { alert('Si son hermanos'); },
-        fail: function() { alert('No son hermanos');},
+        success: function(answer) { alert('Carlos es abuelo de Maria'); },
+        fail: function() { alert('Carlos NO es abuelo de Maria');},
         error: function(err) { console.log(err); },
         limit: function() { console.log('Limite excedido'); }
     });
