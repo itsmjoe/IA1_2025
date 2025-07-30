@@ -2,51 +2,45 @@ package main
 
 import (
 	"fmt"
-	"log"
-	"strings"
+	"os"
 
 	"github.com/ichiban/prolog"
 )
 
 func main() {
 	// Crear nueva máquina Prolog
-	p := prolog.New(nil, nil)
+	p := prolog.New(os.Stdin, os.Stdout)
 
-	// Código Prolog (como en Tau Prolog)
-	program := `
+	// Carga el código de Prolog
+	if err := p.Exec(`
         padre(juan, maria).
         padre(juan, jose).
         madre(ana, maria).
         madre(ana, jose).
-
         hermano(X, Y) :- padre(P, X), padre(P, Y), X \= Y.
-    `
-
-	// Ejecutar el código Prolog
-	if err := p.Exec(program); err != nil {
-		log.Fatalf("Error cargando el programa: %v", err)
+    `); err != nil {
+		fmt.Printf("Error al cargar el código Prolog: %v\n", err)
+		return
 	}
 
 	// Consulta: ¿maria y jose son hermanos?
 	q := `hermano(maria, jose).`
-	solutions, err := p.Query(strings.NewReader(q))
+	solutions, err := p.Query(q)
 	if err != nil {
-		log.Fatalf("Error ejecutando la consulta: %v", err)
+		fmt.Printf("Error al consultar: %v\n", err)
+		return
 	}
+	defer solutions.Close()
 
-	// Verificar si hay al menos una solución
+	// Imprime las soluciones encontradas
 	if solutions.Next() {
-		fmt.Println("✅ Sí, son hermanos.")
-		var s engine.Struct
-		if err := solutions.Scan(&s); err == nil {
-			fmt.Printf("Resultado: %+v\n", s)
-		}
+		fmt.Println("Sí, son hermanos.")
 	} else {
-		fmt.Println("❌ No son hermanos.")
+		fmt.Println("No, no son hermanos.")
 	}
 
-	// Verificar si hubo errores durante la iteración
+	// Verifica si ocurre un error al consultar
 	if err := solutions.Err(); err != nil {
-		log.Fatalf("Error obteniendo resultados: %v", err)
+		fmt.Printf("Error al consultar: %v\n", err)
 	}
 }
