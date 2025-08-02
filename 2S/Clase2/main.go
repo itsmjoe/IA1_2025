@@ -18,10 +18,9 @@ func main() {
 	myWindow := myApp.NewWindow("Clase 2 - Prolog")
 
 	// Crear elementos de la interfaz
-	output := widget.NewMultiLineEntry()
-	output.SetPlaceHolder("Resultados de Prolog aparecerán aquí...")
-	output.SetMinRowsVisible(10)
-	output.Disable()
+	output := widget.NewLabel("Resultados de Prolog aparecerán aquí...")
+	output.TextStyle = fyne.TextStyle{Bold: true}
+	output.Alignment = fyne.TextAlignCenter
 
 	queryInput := widget.NewEntry()
 	queryInput.SetPlaceHolder("Ingrese una consulta: ej: hermano(maria, jose).")
@@ -75,14 +74,19 @@ func main() {
 		}
 	})
 
-	// Organizar los widgets en un layout
-	myWindow.SetContent(container.NewVBox(
+	// Organizar los widgets en un layout y usar fondo claro para la ventana
+	content := container.NewVBox(
 		loadButton,
 		queryInput,
 		queryButton,
 		output,
-	))
-
+	)
+	// Fondo claro usando un contenedor
+	bg := container.NewMax(
+		widget.NewLabel(""), // hack: fondo blanco
+		content,
+	)
+	myWindow.SetContent(bg)
 	myWindow.Resize(fyne.NewSize(600, 400))
 	myWindow.ShowAndRun()
 }
