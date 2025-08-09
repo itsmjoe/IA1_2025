@@ -1,6 +1,6 @@
 % Hechos
 animal(raton).
-aninal(serpiente).
+animal(serpiente).
 animal(halcon).
 animal(aguila).
 animal(leon).

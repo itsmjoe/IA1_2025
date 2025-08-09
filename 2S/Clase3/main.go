@@ -26,22 +26,43 @@ func initProlog() {
 func main() {
 	initProlog()
 
-	http.HandleFunc("/load", handleLoad)
-	http.HandleFunc("/add", handleAddFact)
-	http.HandleFunc("/query", handleQuery)
-	http.HandleFunc("/download", handleDownload)
+	http.HandleFunc("/load", withCORS(handleLoad))
+	http.HandleFunc("/add", withCORS(handleAddFact))
+	http.HandleFunc("/query", withCORS(handleQuery))
+	http.HandleFunc("/download", withCORS(handleDownload))
 
 	fmt.Println("Servidor iniciado en http://localhost:8000")
 	http.ListenAndServe(":8000", nil)
 }
 
+// Midleware para CORS
+func withCORS(next http.HandlerFunc) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		w.Header().Set("Access-Control-Allow-Origin", "*")
+		w.Header().Set("Access-Control-Allow-Methods", "GET, POST, OPTIONS")
+		w.Header().Set("Access-Control-Allow-Headers", "Content-Type")
+		if r.Method == http.MethodOptions {
+			w.WriteHeader(http.StatusOK)
+			return
+		}
+
+		next(w, r)
+	}
+}
+
 // POST /load - carga el código prolog desde un archivo de texto
 func handleLoad(w http.ResponseWriter, r *http.Request) {
+	if r.Method != http.MethodPost {
+		http.Error(w, "Método no permitido", http.StatusMethodNotAllowed)
+		return
+	}
+
 	mutex.Lock()
 	defer mutex.Unlock()
 
 	body, err := io.ReadAll(r.Body)
 	if err != nil {
+		fmt.Println("Error al leer el cuerpo de la solicitud:", err)
 		http.Error(w, "Error al leer el cuerpo de la solicitud", http.StatusBadRequest)
 		return
 	}
@@ -51,6 +72,7 @@ func handleLoad(w http.ResponseWriter, r *http.Request) {
 
 	err = prologVM.Exec(code.String())
 	if err != nil {
+		fmt.Println("Error al cargar el código Prolog:", err)
 		http.Error(w, "Error al cargar el código Prolog", http.StatusInternalServerError)
 		return
 	}
@@ -61,11 +83,17 @@ func handleLoad(w http.ResponseWriter, r *http.Request) {
 
 // POST /add - agrega un hecho al código Prolog
 func handleAddFact(w http.ResponseWriter, r *http.Request) {
+	if r.Method != http.MethodPost {
+		http.Error(w, "Método no permitido", http.StatusMethodNotAllowed)
+		return
+	}
+
 	mutex.Lock()
 	defer mutex.Unlock()
 
 	body, err := io.ReadAll(r.Body)
 	if err != nil {
+		fmt.Println("Error al leer el cuerpo de la solicitud:", err)
 		http.Error(w, "Error al leer el cuerpo de la solicitud", http.StatusBadRequest)
 		return
 	}
@@ -75,6 +103,7 @@ func handleAddFact(w http.ResponseWriter, r *http.Request) {
 
 	err = prologVM.Exec(fact)
 	if err != nil {
+		fmt.Println("Error al agregar el hecho:", err)
 		http.Error(w, fmt.Sprintf("Error al agregar el hecho: %v", err), http.StatusInternalServerError)
 		return
 	}
@@ -84,6 +113,11 @@ func handleAddFact(w http.ResponseWriter, r *http.Request) {
 
 // POST /query - ejecuta una consulta Prolog
 func handleQuery(w http.ResponseWriter, r *http.Request) {
+	if r.Method != http.MethodPost {
+		http.Error(w, "Método no permitido", http.StatusMethodNotAllowed)
+		return
+	}
+
 	mutex.Lock()
 	defer mutex.Unlock()
 
@@ -91,29 +125,41 @@ func handleQuery(w http.ResponseWriter, r *http.Request) {
 		Query string `json:"query"`
 	}
 	if err := json.NewDecoder(r.Body).Decode(&query); err != nil {
+		fmt.Println("Error al leer el cuerpo de la solicitud:", err)
 		http.Error(w, "Consulta inválida", http.StatusBadRequest)
 		return
 	}
 
 	solutions, err := prologVM.Query(query.Query)
 	if err != nil {
+		fmt.Println("Error en la consulta Prolog:", err)
 		http.Error(w, fmt.Sprintf("Error en la consulta %v", err), http.StatusInternalServerError)
 		return
 	}
 	defer solutions.Close()
 
-	var results []string
+	var results []map[string]any
+
 	for solutions.Next() {
-		var m map[string]any
+		m := make(map[string]any)
 		if err := solutions.Scan(&m); err != nil {
+			fmt.Println("Error al escanear resultados:", err)
 			http.Error(w, fmt.Sprintf("Error al escanear resultados: %v", err), http.StatusInternalServerError)
 			return
 		}
-		results = append(results, fmt.Sprintf("%v", m))
+		results = append(results, m)
+	}
+
+	if err := solutions.Err(); err != nil {
+		fmt.Println("Error en la consulta Prolog:", err)
+		http.Error(w, fmt.Sprintf("Error en la consulta %v", err), http.StatusInternalServerError)
+		return
 	}
 
 	if len(results) == 0 {
-		results = append(results, "No se encontraron resultados")
+		results = append(results, map[string]any{"message": "No se encontraron resultados"})
+	} else if len(results) == 1 && len(results[0]) == 0 {
+		results[0] = map[string]any{"message": "La consulta es correcta"}
 	}
 
 	resp := map[string]interface{}{
@@ -125,6 +171,11 @@ func handleQuery(w http.ResponseWriter, r *http.Request) {
 
 // GET /download - descarga el código Prolog actual
 func handleDownload(w http.ResponseWriter, r *http.Request) {
+	if r.Method != http.MethodGet {
+		http.Error(w, "Método no permitido", http.StatusMethodNotAllowed)
+		return
+	}
+
 	mutex.Lock()
 	defer mutex.Unlock()
 

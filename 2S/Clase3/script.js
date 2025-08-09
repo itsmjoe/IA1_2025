@@ -5,7 +5,7 @@ document.getElementById("fileInput").addEventListener("change", async function(e
   if (!file) return;
   
   const text = await file.text();
-  const res = await fetch("/load", {
+  const res = await fetch("http://localhost:8000/load", {
     method: "POST",
     headers: { "Content-Type": "text/plain" },
     body: text
@@ -16,18 +16,18 @@ document.getElementById("fileInput").addEventListener("change", async function(e
 
 async function runQuery() {
   const query = document.getElementById("queryInput").value;
-  const res = await fetch("/query", {
+  const res = await fetch("http://localhost:8000/query", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ query })
   });
   const data = await res.json();
-  output.textContent = data.result.join("\n");
+  output.textContent = data.results.map(result => JSON.stringify(result)).join("\n");
 }
 
 async function addFact() {
   const fact = document.getElementById("factInput").value;
-  const res = await fetch("/add", {
+  const res = await fetch("http://localhost:8000/add", {
     method: "POST",
     headers: { "Content-Type": "text/plain" },
     body: fact
@@ -36,5 +36,5 @@ async function addFact() {
 }
 
 function downloadCode() {
-  window.open("/download", "_blank");
+  window.open("http://localhost:8000/download", "_blank");
 }
