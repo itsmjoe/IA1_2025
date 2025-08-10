@@ -7,6 +7,7 @@ import (
 	"io"
 	"net/http"
 	"os"
+	"strings"
 	"sync"
 
 	"github.com/ichiban/prolog"
@@ -99,9 +100,42 @@ func handleAddFact(w http.ResponseWriter, r *http.Request) {
 	}
 
 	fact := string(body)
-	code.WriteString("\n" + fact)
+	fact = strings.TrimSpace(fact)
+	if fact == "" {
+		http.Error(w, "Hecho o regla inválido", http.StatusBadRequest)
+		return
+	}
 
-	err = prologVM.Exec(fact)
+	openParen := strings.Index(fact, "(")
+	if openParen == -1 {
+		http.Error(w, "Hecho o regla inválido", http.StatusBadRequest)
+		return
+	}
+	pred := fact[:openParen]
+
+	lines := strings.Split(code.String(), "\n")
+	var newCodeLines []string
+
+	inserted := false
+
+	for _, line := range lines {
+		trimmed := strings.TrimSpace(line)
+		if strings.HasPrefix(trimmed, pred+"(") && !inserted {
+			newCodeLines = append(newCodeLines, fact)
+			newCodeLines = append(newCodeLines, line)
+			inserted = true
+		} else {
+			newCodeLines = append(newCodeLines, line)
+		}
+	}
+	if !inserted {
+		newCodeLines = append(newCodeLines, fact)
+	}
+
+	code.Reset()
+	code.WriteString(strings.Join(newCodeLines, "\n"))
+
+	err = prologVM.Exec(code.String())
 	if err != nil {
 		fmt.Println("Error al agregar el hecho:", err)
 		http.Error(w, fmt.Sprintf("Error al agregar el hecho: %v", err), http.StatusInternalServerError)
