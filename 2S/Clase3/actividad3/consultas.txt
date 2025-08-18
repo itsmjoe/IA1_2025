@@ -1,0 +1,52 @@
+Consultas de ejemplo para actividad3
+
+1) Unificación con variables
+   consulta: persona(X, 28, D).
+   descripcion: Busca la persona de 28 años (X) y su dirección (D).
+
+2) Comparaciones aritméticas
+   consulta: edad_mayor(carlos, ana).
+   descripcion: Verifica si Carlos es mayor que Ana (55 > 28).
+
+3) Estructuras compuestas
+   consulta: persona(Nombre, Edad, direccion(Calle, Numero)).
+   descripcion: Obtiene todas las personas y descompone su dirección.
+
+4) Cargar y consultar en entorno web / app
+   (Usar el archivo datos.pl en la app Fyne o Tau-Prolog)
+
+5) Backtracking (punto y coma)
+   consulta: amigo(X, Y).
+   descripcion: Muestra todas las parejas de amigos (varios resultados).
+
+6) Ejemplo de regla
+   consulta: abuelo(carlos, Y).
+   descripcion: Verifica si Carlos es abuelo de alguien (depende de padres definidos).
+
+-- Predicados nuevos para la consigna (ejemplos)
+
+7) maximo/3 (corte verde)
+   consulta: maximo(5, 3, M).
+   descripcion: Debe unificar M = 5 y no ofrecer alternativas (corte evita retroceso).
+
+8) clasifica_g/2 (corte verde)
+   consulta: clasifica_g(12, R).
+   descripcion: R = niño
+
+9) clasifica_r/2 (corte rojo ejemplo)
+   consulta: clasifica_r(20, R).
+   descripcion: R = adulto
+
+10) suma_lista/2 y suma_lista_tr/2
+   consulta: suma_lista([1,2,3,4], S).
+   descripcion: S = 10 (versión directa)
+   consulta: suma_lista_tr([1,2,3,4], S).
+   descripcion: S = 10 (versión con recursión de cola)
+
+11) not_member/2
+   consulta: not_member(5, [1,2,3]).
+   descripcion: true
+
+12) negación con variable no instanciada (ejemplo de falla)
+   consulta: negacion_ejemplo_uninstanciada(R).
+   descripcion: Mostrar que con hechos existentes la negación falla y retorna 'negacion_false'

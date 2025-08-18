@@ -32,8 +32,11 @@ func main() {
 	http.HandleFunc("/query", withCORS(handleQuery))
 	http.HandleFunc("/download", withCORS(handleDownload))
 
-	fmt.Println("Servidor iniciado en http://localhost:8000")
-	http.ListenAndServe(":8000", nil)
+	fmt.Println("Iniciando servidor en http://localhost:8000")
+	if err := http.ListenAndServe(":8000", nil); err != nil {
+		fmt.Fprintf(os.Stderr, "Error al iniciar servidor: %v\n", err)
+		os.Exit(1)
+	}
 }
 
 // Midleware para CORS
