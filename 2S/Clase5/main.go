@@ -9,18 +9,16 @@ import (
 func main() {
 	// 1. Abrir el diálogo "Ejecutar" con Win+R
 	robotgo.KeyTap("r", "cmd")
+	robotgo.Sleep(1) // 1 segundo
 
-	time.Sleep(500 * time.Millisecond)
-
-	// 2. Escribir "notepad" y presionar Enter
+	// 2. Abrir Notepad
 	robotgo.TypeStr("notepad")
 	robotgo.KeyTap("enter")
+	robotgo.Sleep(1)
 
-	// 3. Esperar a que se abra el Bloc de notas
+	// 3. Escribir en Notepad
+	robotgo.WriteAll("Hola! Esto fue escrito solo con robotgo\nTodo controlado por Go")
+	robotgo.Sleep(1)
+	robotgo.KeyTap("v", "ctrl")
 	time.Sleep(1 * time.Second)
-
-	// 4. Escribir texto
-	robotgo.TypeStr("Hola! Esto fue escrito solo con robotgo")
-	robotgo.KeyTap("enter")
-	robotgo.TypeStr("Todo controlado por Go")
 }
